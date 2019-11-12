@@ -1,5 +1,7 @@
 # Arrowhead Management Tool
 
+This repository was moved to: https://github.com/arrowhead-tools/mgmt-tool-js because it is a Tool in the Arrowhead Tools project. This repository will be deleted in early 2020.
+
 This tool is providing a user interface to manage Arrowhead core systems. Currently the following core systems are supported:
 1. ServiceRegistry (SQL version)
 2. Authorization System (both intra- and inter-cloud authorization schemas)
