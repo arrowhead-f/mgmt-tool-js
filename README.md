@@ -1,6 +1,7 @@
 # Arrowhead Management Tool
 
 This tool is providing a user interface to manage Arrowhead core systems. Currently the following core systems are supported:
+
 1. ServiceRegistry (SQL version)
 2. Authorization System (both intra- and inter-cloud authorization schemas)
 3. Orchestration Store
@@ -9,6 +10,7 @@ This tool is providing a user interface to manage Arrowhead core systems. Curren
 
 
 Running this project has 3 options:
+
 1. Running from prebuilt Docker container
 2. Running and building the project by source code
 
