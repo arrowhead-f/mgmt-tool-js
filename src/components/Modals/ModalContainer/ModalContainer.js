@@ -15,6 +15,8 @@ import InterCloudDialog from '../ModalTypes/InterCloudDialog'
 import OrchStoreDialog from '../ModalTypes/OrchStoreDialog'
 import AddSystem from '../ModalTypes/AddSystem'
 import ChoreographerDialog from '../ModalTypes/ChoreographerDialog'
+import SettingsDialog from '../ModalTypes/SettingsDialog'
+import AddServiceDialog from '../ModalTypes/AddService'
 
 const MODAL_TYPES = {
   add: AddModal,
@@ -24,10 +26,12 @@ const MODAL_TYPES = {
   addAuthEntry: AddAuthEntry,
   addNeighborhood: AddCloud,
   addRelay: AddRelay,
+  addServiceDialog: AddServiceDialog,
   eventHandlerDialog: EventHandlerDialog,
   InterCloudDialog: InterCloudDialog,
   OrchStoreDialog: OrchStoreDialog,
-  ChoreographerDialog: ChoreographerDialog
+  ChoreographerDialog: ChoreographerDialog,
+  settingsDialog: SettingsDialog
 }
 
 const styles = theme => ({

@@ -5,7 +5,10 @@ import * as PropTypes from 'prop-types'
 import Button from '../../../components/CustomButtons/Button'
 import Card from '@material-ui/core/Card'
 import { withStyles } from '@material-ui/core/styles/'
-import { addSystem } from '../../../actions/auth'
+import { createSystem, editSystem } from '../../../actions/serviceRegistry'
+import AddIcon from '@material-ui/icons/Add'
+import EditIcon from '@material-ui/icons/Edit'
+import Typography from '@material-ui/core/Typography'
 
 const styles = theme => ({
   container: {
@@ -26,10 +29,11 @@ class AddSystem extends Component {
     super(props)
 
     this.state = {
-      systemName: '',
-      address: '',
-      port: '',
-      authenticationInfo: ''
+      id: props.data ? props.data.id : undefined,
+      systemName: props.data ? props.data.systemName : '',
+      address: props.data ? props.data.address : '',
+      port: props.data ? props.data.port : '',
+      authenticationInfo: props.data ? props.data.authenticationInfo : ''
     }
   }
 
@@ -55,17 +59,25 @@ class AddSystem extends Component {
   }
 
   handleAddSystemButtonClick = () => {
-    this.props.addSystem(
-      this.state.systemName,
-      this.state.address,
-      this.state.port,
-      this.state.authenticationInfo
-    )
+    if(this.props.isEdit) {
+      this.props.editSystem(
+        this.state.id,
+        this.state.systemName,
+        this.state.address,
+        this.state.port,
+        this.state.authenticationInfo)
+    } else {
+      this.props.createSystem(
+        this.state.systemName,
+        this.state.address,
+        this.state.port,
+        this.state.authenticationInfo)
+    }
     this.props.closeModal()
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, isEdit = false } = this.props
     return (
       <Card
         raised
@@ -76,7 +88,15 @@ class AddSystem extends Component {
           width: '440px'
         }}
       >
+        <Typography
+          variant="h5"
+          align="center"
+          style={{ paddingTop: '10px' }}
+        >
+          System Details
+        </Typography>
         <TextField
+          value={this.state.systemName}
           id="system_name"
           required
           onChange={this.handleSystemNameOnChange}
@@ -84,6 +104,7 @@ class AddSystem extends Component {
           className={classes.input}
         />
         <TextField
+          value={this.state.address}
           id="system_address"
           required
           onChange={this.handleAddressOnChange}
@@ -104,6 +125,7 @@ class AddSystem extends Component {
           }}
         />
         <TextField
+          value={this.state.authenticationInfo}
           id="authentication_info"
           onChange={this.handleAuthenticationInfoOnChange}
           label="Authentication Info"
@@ -127,7 +149,9 @@ class AddSystem extends Component {
             marginBottom: '20px'
           }}
         >
-          Add System
+          {isEdit ? (
+            <p><EditIcon /> Edit System</p>
+          ) : (<p><AddIcon /> Add System</p>)}
         </Button>
       </Card>
     )
@@ -136,16 +160,22 @@ class AddSystem extends Component {
 
 AddSystem.propTypes = {
   classes: PropTypes.object.isRequired,
-  addSystem: PropTypes.func.isRequired,
+  createSystem: PropTypes.func.isRequired,
+  editSystem: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired
 }
 
-function mapStateToProps(dispatch) {}
+function mapStateToProps(dispatch) {
+  return {}
+}
 
 function mapDispatchToProps(dispatch) {
   return {
-    addSystem: (systemName, address, port, authenticationInfo) => {
-      dispatch(addSystem(systemName, address, port, authenticationInfo))
+    createSystem: (systemName, address, port, authenticationInfo) => {
+      dispatch(createSystem({systemName, address, port, authenticationInfo}))
+    },
+    editSystem: (systemId, systemName, address, port, authenticationInfo) => {
+      dispatch(editSystem(systemId, systemName, address, port, authenticationInfo))
     }
   }
 }

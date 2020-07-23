@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import TextField from '@material-ui/core/TextField'
-import PropTypes from 'prop-types'
+import * as PropTypes from 'prop-types'
 import Button from '../../../components/CustomButtons/Button'
 import Card from '@material-ui/core/Card'
 import { withStyles } from '@material-ui/core/styles/'
-import { addService } from '../../../actions/serviceRegistry'
-import ChipInput from 'material-ui-chip-input'
+import { addService, editService } from '../../../actions/serviceRegistry'
+import AddIcon from '@material-ui/icons/Add'
+import EditIcon from '@material-ui/icons/Edit'
+import Typography from '@material-ui/core/Typography'
 
 const styles = theme => ({
   container: {
@@ -27,9 +29,8 @@ class AddService extends Component {
     super(props)
 
     this.state = {
-      serviceDefinition: '',
-      interfaces: [],
-      serviceMetadata: {}
+      id: props.data ? props.data.id : undefined,
+      serviceDefinition: props.data ? props.data.serviceDefinition : ''
     }
   }
 
@@ -37,14 +38,17 @@ class AddService extends Component {
     this.setState({ serviceDefinition: event.target.value })
   }
 
-  handleInterfaceChipsOnChange = chips => {
-    this.setState({ interfaces: chips })
+  handleAddServiceButtonClick = () => {
+    if(this.props.isEdit) {
+      this.props.editService(this.state.id, this.state.serviceDefinition)
+    } else {
+      this.props.addService(this.state.serviceDefinition)
+    }
+    this.props.closeModal()
   }
 
-  handleAddServiceButtonClick = () => {}
-
   render() {
-    const { classes } = this.props
+    const { classes, isEdit } = this.props
     return (
       <Card
         raised
@@ -55,20 +59,23 @@ class AddService extends Component {
           width: '440px'
         }}
       >
+        <Typography
+          variant="h5"
+          align="center"
+          style={{ paddingTop: '10px' }}
+        >
+          Service Details
+        </Typography>
         <TextField
-          id="servicedefinition"
+          value={this.state.serviceDefinition}
+          id="serviceDefinition"
           required
           onChange={this.handleServiceDefinitionOnChange}
           label="ServiceDefinition"
           className={classes.input}
         />
-        <ChipInput
-          onChange={this.handleInterfaceChipsOnChange}
-          className={classes.input}
-          label="Interfaces"
-        />
         <Button
-          disabled
+          disabled={this.state.serviceDefinition === ''}
           color="primary"
           onClick={this.handleAddServiceButtonClick}
           style={{
@@ -78,7 +85,9 @@ class AddService extends Component {
             marginBottom: '20px'
           }}
         >
-          Add Service
+          {isEdit ? (
+            <p><EditIcon /> Edit Service</p>
+          ) : (<p><AddIcon /> Add Service</p>)}
         </Button>
       </Card>
     )
@@ -87,15 +96,19 @@ class AddService extends Component {
 
 AddService.propTypes = {
   classes: PropTypes.object.isRequired,
-  addService: PropTypes.func.isRequired
+  addService: PropTypes.func.isRequired,
+  isEdit: PropTypes.bool
 }
 
 function mapStateToProps(dispatch) {}
 
 function mapDispatchToProps(dispatch) {
   return {
-    addService: () => {
-      dispatch(addService())
+    addService: serviceDefinition => {
+      dispatch(addService({serviceDefinition}))
+    },
+    editService: (serviceId, serviceDefinition) => {
+      dispatch(editService(serviceId, serviceDefinition))
     }
   }
 }

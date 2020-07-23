@@ -20,6 +20,7 @@ class EnhancedTableHead extends React.Component {
           {columnData.map(column => {
             return (
               <TableCell
+                style={{textAlign: column.alignCenter ? 'center' : 'initial'}}
                 key={column.id}
                 numeric={column.numeric}
                 padding={column.disablePadding ? 'none' : 'default'}

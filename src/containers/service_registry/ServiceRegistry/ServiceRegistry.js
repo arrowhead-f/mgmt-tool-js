@@ -7,11 +7,12 @@ import {
     deleteServiceById,
     editSREntry,
     addSREntry,
-    getServiceRegistryEntriesView
-} from '../../actions/serviceRegistry'
-import Button from '../../components/CustomButtons/Button'
-import ModalContainer from '../../components/Modals/ModalContainer/ModalContainer'
-import {hideModal, showModal} from '../../actions/modal'
+    getServiceRegistryEntriesView,
+  echo
+} from '../../../actions/serviceRegistry'
+import Button from '../../../components/CustomButtons/Button'
+import ModalContainer from '../../../components/Modals/ModalContainer/ModalContainer'
+import {hideModal, showModal} from '../../../actions/modal'
 import ClearIcon from '@material-ui/icons/Clear'
 import SearchIcon from '@material-ui/icons/Search'
 import AddIcon from '@material-ui/icons/Add'
@@ -21,7 +22,7 @@ import ServiceRegistryTabContainer from './ServiceRegistryTabContainer'
 
 const styles = theme => ({
     root: {
-        width: '97%',
+        width: '100%',
         paddingBottom: '10px',
         paddingLeft: '5px'
     },
@@ -68,6 +69,7 @@ const styles = theme => ({
 
 class ServiceRegistry extends Component {
     componentDidMount() {
+        this.props.echo()
         this.props.getServiceRegistryEntries()
     }
 
@@ -180,18 +182,21 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        echo: () => {
+            dispatch(echo())
+        },
         getServiceRegistryEntries: () => {
             dispatch(getServiceRegistryEntriesView())
         },
         getFilteredServices: queryData => {
             dispatch(getFilteredServices(queryData))
         },
-        hideModal: () => {
-            dispatch(hideModal())
-        },
-        showModal: (modalProps, modalType) => {
-            dispatch(showModal({modalProps, modalType}))
-        },
+                hideModal: () => {
+                    dispatch(hideModal())
+                },
+                showModal: (modalProps, modalType) => {
+                    dispatch(showModal({modalProps, modalType}))
+                },
         deleteServiceById: serviceId => {
             dispatch(deleteServiceById(serviceId))
         },

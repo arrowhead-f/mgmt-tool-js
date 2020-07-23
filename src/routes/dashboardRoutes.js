@@ -6,6 +6,7 @@ import Fingerprint from '@material-ui/icons/Fingerprint'
 import EventNote from '@material-ui/icons/EventNote'
 import Store from '@material-ui/icons/Store'
 import Assignment from '@material-ui/icons/Assignment'
+import AdbIcon from '@material-ui/icons/Adb';
 import CloudOff from '@material-ui/icons/CloudOff'
 import Security from '@material-ui/icons/Security'
 
@@ -13,19 +14,52 @@ import Security from '@material-ui/icons/Security'
 import GatekeeperPage from '../containers/gatekeeper/Gatekeeper'
 import OrchestratorStatus from '../containers/orchestrator/Status/OrchestratorStatus'
 import OrchestratorStore from '../containers/orchestrator/Store/OrchestratorStore'
-import ServiceRegistryPage from '../containers/service_registry/ServiceRegistry'
+import ServiceRegistryPage from '../containers/service_registry/ServiceRegistry/ServiceRegistry'
 import IntraCloudPage from '../containers/auth/Intracloud/IntraCloud'
 import InterCloudPage from '../containers/auth/Intercloud/InterCloud'
 import EventHandlerPage from '../containers/eventhandler/EventHandler'
 import Choreographer from '../containers/choreographer/Choreographer'
+import SystemsPage from '../containers/service_registry/System/System'
+import ServicesPage from '../containers/service_registry/Service/Service'
 
 const dashboardRoutes = [
   {
-    path: '/registry',
+    collapse: true,
+    path: '/serviceregistry',
     sidebarName: 'Service Registry',
     navbarName: 'Service Registry',
     icon: Description,
-    component: ServiceRegistryPage
+    state: 'serviceregistry',
+    views: [
+      {
+        path: '/serviceregistry/entries',
+        sidebarName: 'Entries',
+        navbarName: 'Service Registry',
+        icon: Description,
+        component: ServiceRegistryPage
+      },
+      {
+        path: '/serviceregistry/systems',
+        sidebarName: 'Systems',
+        navbarName: 'Systems',
+        icon: AdbIcon,
+        component: SystemsPage
+      },
+      {
+        path: '/serviceregistry/services',
+        sidebarName: 'Services',
+        navbarName: 'Services',
+        icon: AdbIcon,
+        component: ServicesPage
+      },
+      {
+        path: '/serviceregistry/interfaces',
+        sidebarName: 'Interfaces',
+        navbarName: 'Interfaces',
+        icon: AdbIcon,
+        component: GatekeeperPage
+      }
+    ]
   },
   {
     collapse: true,
@@ -85,7 +119,7 @@ const dashboardRoutes = [
   {
     redirect: true,
     path: '/',
-    to: '/registry',
+    to: '/serviceregistry/entries',
     navbarName: 'Redirect'
   }
 ]

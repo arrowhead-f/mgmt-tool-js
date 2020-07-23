@@ -18,12 +18,16 @@ import Divider from '@material-ui/core/Divider'
 // // // @material-ui/icons
 import Person from '@material-ui/icons/Person'
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import SettingsIcon from '@material-ui/icons/Settings';
 // core components
 import Button from '../CustomButtons/Button'
 import Badge from '@material-ui/core/Badge';
 import { keycloak } from '../../services/keycloakInstance'
 
+import {connect} from 'react-redux'
+import * as PropTypes from 'prop-types'
 import headerLinksStyle from '../../assets/jss/material-dashboard-react/components/headerLinksStyle'
+import { hideModal, showModal } from '../../actions/modal'
 
 class HeaderLinks extends React.Component {
   state = {
@@ -59,6 +63,16 @@ class HeaderLinks extends React.Component {
     }
   }
 
+  handleClickSettings = () => {
+    this.props.showModal(
+      {
+        open: true,
+        closeModal: this.props.hideModal
+      },
+      'settingsDialog'
+    )
+  }
+
   handleLogout = () => {
     this.setState({ openProfile: null, isOpen: false })
     console.log('Logout called!')
@@ -66,10 +80,23 @@ class HeaderLinks extends React.Component {
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, notifications } = this.props
     const { openProfile, openNotifications } = this.state
     return (
       <div className={classes.searchWrapper}>
+
+        <Button
+          color={window.innerWidth > 959 ? 'transparent' : 'white'}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          onClick={this.handleClickSettings}
+          className={classes.buttonLink}
+        >
+            <SettingsIcon />
+          <Hidden mdUp implementation='css'>
+            <p className={classes.linkText}>Settings</p>
+          </Hidden>
+        </Button>
 
         <Button
           color={window.innerWidth > 959 ? 'transparent' : 'white'}
@@ -80,7 +107,7 @@ class HeaderLinks extends React.Component {
           onClick={this.handleClickNotifications}
           className={classes.buttonLink}
         >
-          <Badge badgeContent={5} color="error">
+          <Badge color="secondary" badgeContent={notifications.length}>
             <NotificationsIcon />
           </Badge>
           <Hidden mdUp implementation='css'>
@@ -104,7 +131,10 @@ class HeaderLinks extends React.Component {
               <Paper>
                 <ClickAwayListener onClickAway={this.handleCloseNotifications}>
                   <MenuList role='menu'>
-                    <MenuItem>Service Registry is unreachable</MenuItem>
+                    {this.props.notifications.map((item, index) => (
+                      <MenuItem key={index}>{item}</MenuItem>
+                      ))}
+                    <MenuItem>Dummy 1</MenuItem>
                     <MenuItem>Dummy 2</MenuItem>
                     <MenuItem>Dummy 3</MenuItem>
                   </MenuList>
@@ -183,4 +213,25 @@ class HeaderLinks extends React.Component {
   }
 }
 
-export default withStyles(headerLinksStyle)(HeaderLinks)
+HeaderLinks.propTypes = {
+  hideModal: PropTypes.func.isRequired,
+  showModal: PropTypes.func.isRequired
+}
+
+function mapStateToProps(state) {
+  const { global } = state
+  return { notifications: global.notifications }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    hideModal: () => {
+      dispatch(hideModal())
+    },
+    showModal: (modalProps, modalType) => {
+      dispatch(showModal({modalProps, modalType}))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(headerLinksStyle)(HeaderLinks))

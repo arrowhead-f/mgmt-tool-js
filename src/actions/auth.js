@@ -72,53 +72,6 @@ export function getInterCloudAuthData() {
   }
 }
 
-export function addSystem(systemName, address, port, authenticationInfo) {
-  if (!systemName || !address || !port) {
-    return
-  }
-
-  const systemData = {
-    systemName,
-    address,
-    port,
-    authenticationInfo
-  }
-
-  return (dispatch, getState) => {
-    networkService
-      .post('/mgmt/systems', [systemData])
-      .then(response => {
-        dispatch(
-          showNotification(
-            {
-              title: 'Saving was successful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'success'
-          )
-        )
-      })
-      .catch(error => {
-        dispatch(
-          showNotification(
-            {
-              title: 'Saving was unsuccessful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 10
-            },
-            'error'
-          )
-        )
-        console.log(error)
-      })
-  }
-}
-
 export function addAuthData(consumer, providerList, service, interfaces, cb) {
   const authData = {
     consumerId: consumer.id,
