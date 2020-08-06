@@ -9,6 +9,7 @@ export const RECEIVE_SR_ENTRIES = 'RECEIVE_SR_ENTRIES'
 export const RECEIVE_SERVICES = 'RECEIVE_SERVICES'
 export const RECEIVE_SERVICE = 'RECEIVE_SERVICE'
 export const RECEIVE_SYSTEMS = 'RECEIVE_SYSTEMS'
+export const RECEIVE_INTERFACES = 'RECEIVE_INTERFACES'
 export const ERROR_SR = 'ERROR_SR'
 
 /*
@@ -64,6 +65,13 @@ function receiveSystems(systems) {
         type: RECEIVE_SYSTEMS,
         data: systems.data
     }
+}
+
+function receiveInterfaces(interfaces) {
+  return {
+    type: RECEIVE_INTERFACES,
+    data: interfaces.data
+  }
 }
 
 function receiveServiceRegistryEntriesView(data) {
@@ -779,6 +787,177 @@ export function editSystem(systemId, systemName, address, port, authenticationIn
               console.log('Error', error.message)
             }
             console.log('config', error.config)
+            reject(error)
+          })
+      }
+    })
+  }
+}
+
+export function getInterfaces(cb){
+  return dispatch => {
+    const serviceRegistryAddress = store.get(coreSystemList.serviceRegistry)
+    if(!serviceRegistryAddress){
+      console.log('No SR address!')
+      dispatch(errorSR('No Service Registry Address Provided'))
+    } else {
+      networkService.get(serviceRegistryAddress + '/serviceregistry/mgmt/interfaces')
+        .then(response => {
+          dispatch(receiveInterfaces(response.data))
+          if(cb) {
+            cb()
+          }
+        })
+        .catch(error => {
+          if(error.response){
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorSR('Check Service Registry Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+        })
+    }
+  }
+}
+
+export function deleteInterface(interfaceId, cb) {
+  return dispatch => {
+    const serviceRegistryAddress = store.get(coreSystemList.serviceRegistry)
+    if (!serviceRegistryAddress) {
+      console.log('No SR address!')
+      dispatch(errorSR('No Service Registry Address Provided!'))
+    } else {
+      networkService
+        .delete(`${serviceRegistryAddress}/serviceregistry/mgmt/interfaces/${interfaceId}`)
+        .then(response => {
+          console.log(response.data)
+          dispatch(
+            showNotification(
+              {
+                title: 'Deletion was successful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'success'
+            )
+          )
+          dispatch(getInterfaces())
+          if (cb) {
+            cb()
+          }
+        })
+    }
+  }
+}
+
+export function editInterface(interfaceId, interfaceName, cb){
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      const serviceRegistryAddress = store.get(coreSystemList.serviceRegistry)
+      if (!serviceRegistryAddress) {
+        console.log('No SR address!')
+        dispatch(errorSR('No Service Registry Address Provided!'))
+      } else {
+        networkService
+          .put(`${serviceRegistryAddress}/serviceregistry/mgmt/interfaces/${interfaceId}`, { interfaceName })
+          .then(response => {
+            dispatch(
+              showNotification(
+                {
+                  title: 'Edit was successful',
+                  message: '',
+                  position: 'tc',
+                  dismissible: true,
+                  autoDismiss: 5
+                },
+                'success'
+              )
+            )
+            dispatch(getInterfaces())
+            resolve(response.data)
+          })
+          .catch(error => {
+            dispatch(
+              showNotification(
+                {
+                  title: 'Edit was unsuccessful',
+                  message: '',
+                  position: 'tc',
+                  dismissible: true,
+                  autoDismiss: 10
+                },
+                'error'
+              )
+            )
+            if (error.response) {
+              console.log(error.response.data)
+              console.log(error.response.status)
+              console.log(error.response.headers)
+            } else if (error.request) {
+              console.log('error!', error, error.message)
+              console.log('err req!', JSON.stringify(error.request, null, 4))
+
+              dispatch(errorSR('Check Service Registry Address or Load a Certificate!'))
+            } else {
+              console.log('Error', error.message)
+            }
+            console.log('config', error.config)
+            reject(error)
+          })
+      }
+    })
+  }
+}
+
+export function addInterface(interfaceData) {
+  return (dispatch, getState) => {
+    return new Promise( (resolve, reject) => {
+      const serviceRegistryAddress = store.get(coreSystemList.serviceRegistry)
+      if (!serviceRegistryAddress) {
+        console.log('No SR address!')
+        dispatch(errorSR('No Service Registry Address Provided!'))
+      } else {
+        networkService
+          .post(serviceRegistryAddress + '/serviceregistry/mgmt/interfaces', interfaceData)
+          .then(response => {
+            dispatch(
+              showNotification(
+                {
+                  title: 'Saving was successful',
+                  message: '',
+                  position: 'tc',
+                  dismissible: true,
+                  autoDismiss: 5
+                },
+                'success'
+              )
+            )
+            dispatch(getInterfaces())
+            resolve(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+            dispatch(
+              showNotification(
+                {
+                  title: 'Saving was unsuccessful',
+                  message: '',
+                  position: 'tc',
+                  dismissible: true,
+                  autoDismiss: 10
+                },
+                'error'
+              )
+            )
             reject(error)
           })
       }

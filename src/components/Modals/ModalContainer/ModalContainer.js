@@ -17,6 +17,7 @@ import AddSystem from '../ModalTypes/AddSystem'
 import ChoreographerDialog from '../ModalTypes/ChoreographerDialog'
 import SettingsDialog from '../ModalTypes/SettingsDialog'
 import AddServiceDialog from '../ModalTypes/AddService'
+import AddInterfaceDialog from '../ModalTypes/AddInterface'
 
 const MODAL_TYPES = {
   add: AddModal,
@@ -27,6 +28,7 @@ const MODAL_TYPES = {
   addNeighborhood: AddCloud,
   addRelay: AddRelay,
   addServiceDialog: AddServiceDialog,
+  addInterfaceDialog: AddInterfaceDialog,
   eventHandlerDialog: EventHandlerDialog,
   InterCloudDialog: InterCloudDialog,
   OrchStoreDialog: OrchStoreDialog,

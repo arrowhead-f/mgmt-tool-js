@@ -1,4 +1,4 @@
-import { RECEIVE_SERVICES, RECEIVE_SERVICE, RECEIVE_SR_ENTRIES_VIEW, RECEIVE_SYSTEMS, RECEIVE_SR_ENTRIES } from '../actions/serviceRegistry'
+import { RECEIVE_SERVICES, RECEIVE_SERVICE, RECEIVE_SR_ENTRIES_VIEW, RECEIVE_SYSTEMS, RECEIVE_SR_ENTRIES, RECEIVE_INTERFACES } from '../actions/serviceRegistry'
 
 export const initialState = {
   groupBySystems: [],
@@ -6,6 +6,7 @@ export const initialState = {
   autoCompleteData: [],
   systems: [],
   services: [],
+  interfaces: [],
   entries: []
 }
 
@@ -39,6 +40,11 @@ export default function services(state = initialState, action = {}) {
       return {
         ...state,
         serviceData: sData
+      }
+    case RECEIVE_INTERFACES:
+      return {
+        ...state,
+        interfaces: action.data
       }
     default:
       return state
