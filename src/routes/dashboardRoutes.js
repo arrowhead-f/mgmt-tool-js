@@ -9,6 +9,12 @@ import Assignment from '@material-ui/icons/Assignment'
 import AdbIcon from '@material-ui/icons/Adb';
 import CloudOff from '@material-ui/icons/CloudOff'
 import Security from '@material-ui/icons/Security'
+import Assistant from '@material-ui/icons/Assistant'
+
+
+import List from '@material-ui/icons/List'
+import SdCard from '@material-ui/icons/SdCard'
+import StorageIcon from '@material-ui/icons/Storage'
 
 // core components/views
 import GatekeeperPage from '../containers/gatekeeper/Gatekeeper'
@@ -21,6 +27,7 @@ import EventHandlerPage from '../containers/eventhandler/EventHandler'
 import Choreographer from '../containers/choreographer/Choreographer'
 import SystemsPage from '../containers/service_registry/System/System'
 import ServicesPage from '../containers/service_registry/Service/Service'
+import InterfacePage from '../containers/service_registry/Interface/Interface'
 
 const dashboardRoutes = [
   {
@@ -57,7 +64,7 @@ const dashboardRoutes = [
         sidebarName: 'Interfaces',
         navbarName: 'Interfaces',
         icon: AdbIcon,
-        component: GatekeeperPage
+        component: InterfacePage
       }
     ]
   },
@@ -115,6 +122,41 @@ const dashboardRoutes = [
     navbarName: 'Gatekeeper',
     icon: Security,
     component: GatekeeperPage
+  },
+  {
+    path: '/eventhandler',
+    sidebarName: 'Event Handler',
+    navbarName: 'Event Handler',
+    icon: EventNote,
+    component: InterfacePage
+  },
+  {
+    path: '/sysregistry',
+    sidebarName: 'System Registry',
+    navbarName: 'System Registry',
+    icon: List,
+    component: InterfacePage
+  },
+  {
+    path: '/devregistry',
+    sidebarName: 'Device Registry',
+    navbarName: 'Device Registry',
+    icon: SdCard,
+    component: InterfacePage
+  },
+  {
+    path: '/qos',
+    sidebarName: 'QoS Monitor',
+    navbarName: 'QoS Monitor',
+    icon: Assistant,
+    component: InterfacePage
+  },
+  {
+    path: '/choreographer',
+    sidebarName: 'Choreographer',
+    navbarName: 'Choreographer',
+    icon: Assignment,
+    component: InterfacePage
   },
   {
     redirect: true,
