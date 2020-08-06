@@ -37,19 +37,35 @@ const styles = theme => ({
 class SettingsDialog extends Component {
   constructor(props) {
     super(props)
-    console.log('SRRRRRRRR', store.get('serviceRegistry'))
     this.state = {
-      serviceRegistry: store.get('serviceRegistry')
+      serviceRegistry: store.get('serviceRegistry'),
+      authorization: store.get('authorization'),
+      orchestrator: store.get('orchestrator'),
+      choreographer: store.get('choreographer')
     }
-
   }
 
   handleSRAddressChange = event => {
     this.setState({ serviceRegistry: event.target.value })
   }
 
+  handleAuthAddressChange = event => {
+    this.setState({ authorization: event.target.value })
+  }
+
+  handleOrchAddressChange = event => {
+    this.setState({ orchestrator: event.target.value })
+  }
+
+  handleCHAddressChange = event => {
+    this.setState({ choreographer: event.target.value })
+  }
+
   handleSave = () => {
     store.set('serviceRegistry', this.state.serviceRegistry)
+    store.set('authorization', this.state.authorization)
+    store.set('orchestrator', this.state.orchestrator)
+    store.set('choreographer', this.state.choreographer)
     this.props.closeModal()
   }
 
@@ -70,8 +86,35 @@ class SettingsDialog extends Component {
           className={classes.input}
           defaultValue={this.state.serviceRegistry}
           />
+        <TextField
+          id="authorization"
+          required
+          onChange={this.handleAuthAddressChange}
+          label="Authorization Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8445"
+          className={classes.input}
+          defaultValue={this.state.authorization}
+        />
+        <TextField
+          id="orchestrator"
+          required
+          onChange={this.handleOrchAddressChange}
+          label="Orchestrator Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8441"
+          className={classes.input}
+          defaultValue={this.state.orchestrator}
+        />
+        <TextField
+          id="choreographer"
+          required
+          onChange={this.handleCHAddressChange}
+          label="Choreographer Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8457"
+          className={classes.input}
+          defaultValue={this.state.choreographer}
+        />
         <Button
-          disabled={ this.state.serviceRegistry === '' }
+          disabled={ this.state.serviceRegistry === '' || this.state.authorization === '' || this.state.orchestrator === '' || this.state.choreographer === '' }
           color='primary'
           onClick={this.handleSave}
           className={classes.button}
