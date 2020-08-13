@@ -7,10 +7,11 @@ import { hideModal, showModal } from '../../actions/modal'
 import {
   getAllChoreographerData,
   createPlan,
-  deletePlan
+  deletePlan, sessionStart
 } from '../../actions/choreographer'
 import CustomButton from '../../components/CustomButtons/Button'
 import AddIcon from '@material-ui/icons/Add'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import ChoreographerTabContainer from './ChoreographerTabContainer'
 
 const styles = theme => ({
@@ -48,11 +49,19 @@ class Choreographer extends Component {
     this.props.deletePlan(planId)
   }
 
+  handlePlanPlayClick = planIds => {
+    this.props.playPlan(planIds)
+  }
+
   render() {
     const { choreographer, classes } = this.props
     return (
       <div className={classes.root}>
         <div className={classes.buttonContainer}>
+          <CustomButton color="primary">
+            <PlayArrowIcon />
+            Play
+          </CustomButton>
           <CustomButton color="primary" onClick={this.handleAddPlanClick}>
             <AddIcon />
             Add
@@ -61,6 +70,7 @@ class Choreographer extends Component {
         <ChoreographerTabContainer
           data={choreographer.data}
           deletePlan={this.handlePlanDeleteClick}
+          playPlan={this.handlePlanPlayClick}
         />
         <ModalContainer />
       </div>
@@ -73,6 +83,7 @@ Choreographer.propTypes = {
   getAllChoreographerData: PropTypes.func.isRequired,
   createPlan: PropTypes.func.isRequired,
   deletePlan: PropTypes.func.isRequired,
+  playPlan: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   hideModal: PropTypes.func.isRequired,
   showModal: PropTypes.func.isRequired
@@ -93,6 +104,9 @@ function mapDispatchToProps(dispatch) {
     },
     deletePlan: planId => {
       dispatch(deletePlan(planId))
+    },
+    playPlan: planIds => {
+      dispatch(sessionStart(planIds))
     },
     hideModal: () => {
       dispatch(hideModal())

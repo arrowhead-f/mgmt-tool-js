@@ -11,6 +11,8 @@ import StepsList from './StepsList'
 import Divider from '@material-ui/core/Divider'
 import Button from '@material-ui/core/Button'
 import ActionList from './ActionList'
+import DeleteIcon from '@material-ui/icons/Delete'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 
 const styles = theme => ({
   root: {
@@ -31,7 +33,7 @@ const styles = theme => ({
 
 class ChoreographerTab extends Component {
   render() {
-    const { data, classes, deletePlan } = this.props
+    const { data, classes, deletePlan, playPlan } = this.props
     console.log('data', data)
     return (
       <div className={classes.root}>
@@ -56,7 +58,14 @@ class ChoreographerTab extends Component {
                     deletePlan(entry.id)
                   }}
                 >
-                  Delete
+                  <DeleteIcon />
+                </Button>
+                <Button
+                  onClick={() => {
+                    playPlan([{id: entry.id}])
+                  }}
+                >
+                  <PlayArrowIcon />
                 </Button>
               </ExpansionPanelActions>
             </ExpansionPanel>
@@ -70,7 +79,8 @@ class ChoreographerTab extends Component {
 ChoreographerTab.propTypes = {
   data: PropTypes.array.isRequired,
   classes: PropTypes.object.isRequired,
-  deletePlan: PropTypes.func.isRequired
+  deletePlan: PropTypes.func.isRequired,
+  playPlan: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(ChoreographerTab)

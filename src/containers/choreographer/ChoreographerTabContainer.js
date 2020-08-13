@@ -27,7 +27,7 @@ class ChoreographerTabContainer extends Component {
   }
 
   render() {
-    const { theme, data, deletePlan } = this.props
+    const { theme, data, deletePlan, playPlan } = this.props
     const { value } = this.state
     return (
       <div>
@@ -41,7 +41,7 @@ class ChoreographerTabContainer extends Component {
           index={this.state.value}
           onChangeIndex={this.handleChangeIndex}
         >
-          <ChoreographerTab data={data} deletePlan={deletePlan} />
+          <ChoreographerTab data={data} deletePlan={deletePlan} playPlan={playPlan} />
         </SwipeableViews>
       </div>
     )
@@ -51,7 +51,8 @@ class ChoreographerTabContainer extends Component {
 ChoreographerTabContainer.propTypes = {
   theme: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
-  deletePlan: PropTypes.func.isRequired
+  deletePlan: PropTypes.func.isRequired,
+  playPlan: PropTypes.func.isRequired
 }
 
 export default withStyles(styles, { withTheme: true })(
