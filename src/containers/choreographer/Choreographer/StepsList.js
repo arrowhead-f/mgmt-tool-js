@@ -15,7 +15,7 @@ const styles = theme => ({
     paddingRight: '5px'
   },
   heading: {
-    fontSize: theme.typography.pxToRem(18),
+    fontSize: theme.typography.pxToRem(16),
     fontWeight: theme.typography.fontWeightMedium
   },
   child: {
@@ -42,16 +42,24 @@ class StepsList extends Component {
           return (
             <ExpansionPanel key={step.name}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>{step.name}</Typography>
+                <Typography className={classes.heading}>Step: {step.name}</Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.child}>
                 <Typography>
-                  <b>Next Steps:</b>{' '}
-                  {step.nextSteps && step.nextSteps.length ? step.nextSteps.join(', ') : '-'}
+                  <b>Services:</b>{` ${step.serviceName}`}
                 </Typography>
                 <Typography>
-                  <b>Services:</b>{' '}
-                  {step.services && step.services.length ? step.services.join(', ') : '-'}
+                  <b>Next Steps:</b>{' '}
+                  {step.nextSteps && step.nextSteps.length ? step.nextSteps.map(s => s.stepName).join(', ') : '-'}
+                </Typography>
+                <Typography>
+                  <b>Quantity:</b>{` ${step.quantity}`}
+                </Typography>
+                <Typography>
+                  <b>Parameters:</b>{` ${step.parameters}`}
+                </Typography>
+                <Typography>
+                  <b>Metadata</b>{` ${step.metadata}`}
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>

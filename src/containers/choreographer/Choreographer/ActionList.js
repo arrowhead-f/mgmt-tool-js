@@ -1,16 +1,16 @@
+/**
+ * @author Svetlin Tanyi <szvetlin@aitia.ai> on 2020. 08. 13.
+ */
+
 import React, { Component } from 'react'
 import * as PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
 import StepsList from './StepsList'
-import Divider from '@material-ui/core/Divider'
-import Button from '@material-ui/core/Button'
-import ActionList from './ActionList'
 
 const styles = theme => ({
   root: {
@@ -26,39 +26,38 @@ const styles = theme => ({
   child: {
     display: 'flex',
     flexDirection: 'column'
+  },
+  row: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'baseline'
+  },
+  marginRight20: {
+    marginRight: '18px'
   }
 })
 
-class ChoreographerTab extends Component {
+class ActionList extends Component {
   render() {
-    const { data, classes, deletePlan } = this.props
-    console.log('data', data)
+    const { classes, actions } = this.props
     return (
       <div className={classes.root}>
-        {data.map(entry => {
+        {actions.map((action, index) => {
           return (
-            <ExpansionPanel key={entry.id}>
+            <ExpansionPanel key={index}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>
-                  Plan name: {entry.name}
-                </Typography>
+                <Typography className={classes.heading}>Action: {action.name}</Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.child}>
                 <Typography>
-                  <b>First Action:</b>{` ${entry.firstActionName ? entry.firstActionName : '-'}`}
+                  <b>Next Action:</b>{` ${action.nextActionName ? action.nextActionName: '-'}`}
                 </Typography>
-                <ActionList actions={entry.actions} />
+                <Typography>
+                  <b>Fist steps:</b>{` ${action.firstStepNames && action.firstStepNames.length ? action.firstStepNames.join(', ') : '-'}`}
+                </Typography>
+                <StepsList steps={action.steps} />
               </ExpansionPanelDetails>
-              <Divider />
-              <ExpansionPanelActions>
-                <Button
-                  onClick={() => {
-                    deletePlan(entry.id)
-                  }}
-                >
-                  Delete
-                </Button>
-              </ExpansionPanelActions>
             </ExpansionPanel>
           )
         })}
@@ -67,10 +66,9 @@ class ChoreographerTab extends Component {
   }
 }
 
-ChoreographerTab.propTypes = {
-  data: PropTypes.array.isRequired,
-  classes: PropTypes.object.isRequired,
-  deletePlan: PropTypes.func.isRequired
+ActionList.propTypes = {
+  actions: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(ChoreographerTab)
+export default withStyles(styles)(ActionList)
