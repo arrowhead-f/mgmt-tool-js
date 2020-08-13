@@ -3,5 +3,8 @@
  */
 
 export const coreSystemList = {
-  serviceRegistry: 'serviceRegistry'
+  serviceRegistry: 'serviceRegistry',
+  authorization: 'authorization',
+  orchestrator: 'orchestrator',
+  choreographer: 'choreographer'
 }

@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
 import Typography from '@material-ui/core/Typography'
 import AutoCompleteMulti from '../../AutoCompleteMulti/AutoCompleteMulti'
+import AutoCompleteSingle from '../../AutoCompleteSingle/AutoCompleteSingle'
 
 const styles = theme => ({
   input: {
@@ -18,6 +19,20 @@ const styles = theme => ({
     marginTop: '10px',
     marginBottom: '10px',
     width: '400px'
+  },
+  inputSmall: {
+    marginLeft: '20px',
+    marginRight: '20px',
+    marginTop: '10px',
+    marginBottom: '10px',
+    width: '380px'
+  },
+  inputSmall2: {
+    marginLeft: '20px',
+    marginRight: '20px',
+    marginTop: '10px',
+    marginBottom: '10px',
+    width: '360px'
   },
   prop: {
     display: 'flex',
@@ -49,6 +64,30 @@ const styles = theme => ({
     margin: '10px',
     width: '440px'
   },
+  cardDiv: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '10px',
+    width: '420px',
+    boxShadow: "0 4px 8px 0 rgba(0,0,0,0.5)",
+    borderRadius: '3px',
+    background: '#ddd'
+  },
+  cardDiv2: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '10px',
+    width: '400px',
+    boxShadow: "0 4px 8px 0 rgba(0,0,0,0.5)",
+    borderRadius: '3px',
+    background: '#fff'
+  },
+  cardSmall: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '10px',
+    width: '420px'
+  },
   buttonStyle: {
     width: '440px',
     marginLeft: '10px'
@@ -61,7 +100,21 @@ class ChoreographerDialog extends Component {
 
     this.state = {
       name: '',
-      steps: [{ name: '', nextSteps: [], services: [] }]
+      firstActionName: '',
+      actions: [
+        {
+          name: '',
+          steps: [
+            {
+              name: '',
+              serviceName: '',
+              metadata: '',
+              parameters: '',
+              quantity: ''
+            }
+          ]
+        }
+      ]
     }
   }
 
@@ -73,49 +126,121 @@ class ChoreographerDialog extends Component {
     this.setState({ name: event.target.value })
   }
 
-  handleStepsNameChange = index => event => {
-    const tmpArr = [...this.state.steps]
+
+
+  handleActionNameChange = index => event => {
+    const tmpArr = [...this.state.actions]
     tmpArr[index].name = event.target.value
+    this.setState({actions: [...tmpArr]})
+  }
+
+  handleNextActionNameChange = index => value => {
+    const tmpArray = [...this.state.actions]
+    tmpArray[index].nextActionName = value.name
+    this.setState({actions: tmpArray})
+  }
+
+  handleActionFab = () => {
+    const emptyAction = {
+      name: '',
+        steps: [
+        {
+          name: '',
+          serviceName: '',
+          metadata: '',
+          parameters: '',
+          quantity: ''
+        }
+      ]
+    }
     this.setState({
-      steps: [...tmpArr]
+      actions: [...this.state.actions, emptyAction]
     })
   }
 
-  handlePlanFab = () => {
-    const emptyStep = { name: '', nextSteps: [], services: [] }
+  handleStepFab = actionIndex => () => {
+    const emptyStep = {
+      name: '',
+      serviceName: '',
+      metadata: '',
+      parameters: '',
+      quantity: ''
+    }
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps = [...tmpArray[actionIndex].steps, emptyStep]
     this.setState({
-      steps: [...this.state.steps, emptyStep]
+      actions: [...tmpArray]
     })
   }
 
   handleButtonClick = () => {
-    console.log(this.state)
     this.props.createPlan(this.state)
   }
 
-  handleNextStepsChange = index => value => {
+  handleNextStepsChange = (actionIndex, stepIndex) => value => {
     const stringArray = value.map(item => item.name)
-    const tmpArray = [...this.state.steps]
-    tmpArray[index].nextSteps = [...stringArray]
-    this.setState({ steps: tmpArray })
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps[stepIndex].nextStepNames = [...stringArray]
+    this.setState({ actions: tmpArray })
+  }
+
+  handleFirstStepsChange = index => value => {
+    const stringArray = value.map(item => item.name)
+    const tmpArray = [...this.state.actions]
+    tmpArray[index].firstStepNames = [...stringArray]
+    this.setState({ actions: tmpArray })
+  }
+
+  handleFirstActionNameChange = value => {
+    this.setState({firstActionName: value.name})
   }
 
   handleServicesChange = index => value => {
     const stringArray = value.map(service => service.serviceDefinition)
-    const tmpArray = [...this.state.steps]
+    const tmpArray = [...this.state.actions]
     tmpArray[index].services = [...stringArray]
     this.setState({ steps: tmpArray })
   }
 
-  isServiceProvidedForStep = () => {
-    let disabled = true
-    for (const item of this.state.steps) {
-      if (item.services.length !== 0) {
-        disabled = false
-        break
+  handleStepServiceNameChange = (actionIndex, stepIndex) => event => {
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps[stepIndex].serviceName = event.target.value
+    this.setState({ actions: tmpArray})
+  }
+
+  handleQuantityChange = (actionIndex, stepIndex) => event => {
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps[stepIndex].quantity = event.target.value
+    this.setState({ actions: tmpArray})
+  }
+
+  handleParameterChange = (actionIndex, stepIndex) => event => {
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps[stepIndex].parameters = event.target.value
+    this.setState({ actions: tmpArray})
+  }
+
+  handleMetadataChange = (actionIndex, stepIndex) => event => {
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps[stepIndex].metadata = event.target.value
+    this.setState({ actions: tmpArray})
+  }
+
+  handleStepNameChange = (actionIndex, stepIndex) => event => {
+    const tmpArray = [...this.state.actions]
+    tmpArray[actionIndex].steps[stepIndex].name = event.target.value
+    this.setState({ actions: tmpArray})
+  }
+
+  isAddbuttonDisabled = () => {
+    for (const action of this.state.actions) {
+      for(const step of action.steps){
+        if (step.serviceName.length === 0) {
+          return true
+        }
       }
     }
-    return disabled
+    return false
   }
 
   render() {
@@ -137,6 +262,22 @@ class ChoreographerDialog extends Component {
             label="Name"
             onChange={this.handlePlanNameChange}
           />
+          <AutoCompleteSingle
+            required
+            handleOnChange={this.handleFirstActionNameChange}
+            label="First Action"
+            placeholder="Fist Action"
+            keyValue="name"
+            suggestions={this.state.actions}
+            classes={{
+              inputRoot: { flexWrap: 'wrap' },
+              textField: {
+                width: '400px',
+                marginTop: '20px',
+                marginLeft: '20px'
+              }
+            }}
+          />
         </Card>
         <Card raised className={classes.card}>
           <Typography
@@ -144,49 +285,122 @@ class ChoreographerDialog extends Component {
             align="center"
             style={{ paddingTop: '10px' }}
           >
-            Steps
+            Actions
           </Typography>
           <div>
-            {this.state.steps.map(({ name }, index) => {
-              return (
-                <div key={index}>
-                  <TextField
-                    label="Name"
-                    value={name}
-                    className={classes.input}
-                    onChange={this.handleStepsNameChange(index)}
-                  />
-                  <AutoCompleteMulti
-                    handleOnChange={this.handleNextStepsChange(index)}
-                    label="Next Steps"
-                    placeholder="Next Steps"
-                    keyValue="name"
-                    suggestions={this.state.steps}
-                  />
-                  <AutoCompleteMulti
-                    handleOnChange={this.handleServicesChange(index)}
-                    label="Services"
-                    required
-                    placeholder="Services"
-                    keyValue="serviceDefinition"
-                    suggestions={services}
-                  />
-                </div>
-              )
-            })}
+            {
+              this.state.actions.map(({name, actionName, steps}, actionIndex) => {
+                return (
+                  <div className={classes.cardDiv} key={actionIndex}>
+                    <TextField
+                      label="Name"
+                      value={name}
+                      className={classes.inputSmall}
+                      onChange={this.handleActionNameChange(actionIndex)}
+                    />
+                    <AutoCompleteSingle
+                      classes={{
+                        inputRoot: { flexWrap: 'wrap' },
+                        textField: {
+                          width: '400px',
+                          marginTop: '20px',
+                          marginLeft: '20px'
+                        }
+                      }}
+                      handleOnChange={this.handleNextActionNameChange(actionIndex)}
+                      label="Next Action"
+                      keyValue="name"
+                      suggestions={this.state.actions}
+                    />
+                    <AutoCompleteMulti
+                      handleOnChange={this.handleFirstStepsChange(actionIndex)}
+                      label="First Steps"
+                      keyValue="name"
+                      suggestions={this.state.actions[actionIndex].steps}
+                    />
+                    <Typography
+                      variant="h6"
+                      align="center"
+                      style={{ paddingTop: '10px' }}
+                    >
+                      Steps
+                    </Typography>
+                    <div>
+                      {
+                        this.state.actions[actionIndex].steps.map(({name, quantity, metadata, serviceName, parameters, nextStepNames}, stepIndex) => {
+                          return (
+                            <div className={classes.cardDiv2} key={stepIndex}>
+                              <TextField
+                                onChange={this.handleStepNameChange(actionIndex, stepIndex)}
+                                label="Name"
+                                value={name}
+                                className={classes.inputSmall2}
+                                />
+                              <AutoCompleteMulti
+                                handleOnChange={this.handleNextStepsChange(actionIndex, stepIndex)}
+                                label="Next Steps"
+                                keyValue="name"
+                                suggestions={this.state.actions[actionIndex].steps}
+                              />
+                              <TextField
+                                onChange={this.handleStepServiceNameChange(actionIndex, stepIndex)}
+                                label="Service"
+                                value={serviceName}
+                                className={classes.inputSmall2}
+                              />
+                              <TextField
+                                onChange={this.handleQuantityChange(actionIndex, stepIndex)}
+                                label="Quantity"
+                                value={quantity}
+                                type="number"
+                                inputProps={{
+                                  min: '1'
+                                }}
+                                className={classes.inputSmall2}
+                              />
+                              <TextField
+                                onChange={this.handleMetadataChange(actionIndex, stepIndex)}
+                                label="Metadata"
+                                value={metadata}
+                                className={classes.inputSmall2}
+                              />
+                              <TextField
+                                onChange={this.handleParameterChange(actionIndex, stepIndex)}
+                                label="Parameters"
+                                value={parameters}
+                                className={classes.inputSmall2}
+                              />
+                            </div>
+                          )
+                        })
+                      }
+                      <Fab
+                        className={classes.fabStyle}
+                        size="small"
+                        color="secondary"
+                        aria-label="Add"
+                        onClick={this.handleStepFab(actionIndex)}
+                      >
+                        <AddIcon />
+                      </Fab>
+                    </div>
+                  </div>
+                )
+              })
+            }
           </div>
           <Fab
             className={classes.fabStyle}
             size="small"
             color="secondary"
             aria-label="Add"
-            onClick={this.handlePlanFab}
+            onClick={this.handleActionFab}
           >
             <AddIcon />
           </Fab>
         </Card>
         <Button
-          disabled={this.isServiceProvidedForStep()}
+          disabled={this.isAddbuttonDisabled()}
           color="primary"
           onClick={this.handleButtonClick}
           className={classes.buttonStyle}

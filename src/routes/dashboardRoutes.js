@@ -156,7 +156,7 @@ const dashboardRoutes = [
     sidebarName: 'Choreographer',
     navbarName: 'Choreographer',
     icon: Assignment,
-    component: InterfacePage
+    component: Choreographer
   },
   {
     redirect: true,

@@ -1,6 +1,6 @@
 import {
   RECEIVE_SINGLE_CHOREOGRAPHER_DATA,
-  REVEIVE_ALL_CHOREOGRAPHER_DATA
+  RECEIVE_ALL_CHOREOGRAPHER_DATA,
 } from '../actions/choreographer'
 
 const initialState = {
@@ -15,7 +15,7 @@ export default function choreographer(state = initialState, action = {}) {
         ...state,
         single: { ...state.single, [action.id]: action.data }
       }
-    case REVEIVE_ALL_CHOREOGRAPHER_DATA:
+    case RECEIVE_ALL_CHOREOGRAPHER_DATA:
       return {
         ...state,
         data: action.data
