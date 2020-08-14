@@ -226,6 +226,7 @@ export function sessionStart(ids){
               'success'
             )
           )
+          dispatch(hideModal())
         })
         .catch(error => {
           dispatch(

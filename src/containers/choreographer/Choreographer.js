@@ -45,6 +45,18 @@ class Choreographer extends Component {
     )
   }
 
+  handlePlayClick = (plans) => () => {
+    this.props.showModal(
+      {
+        open: true,
+        closeModal: this.props.hideModal,
+        playPlan: this.props.playPlan,
+        plans: plans
+      },
+      'ChoreographerPlayDialog'
+    )
+  }
+
   handlePlanDeleteClick = planId => {
     this.props.deletePlan(planId)
   }
@@ -58,9 +70,9 @@ class Choreographer extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.buttonContainer}>
-          <CustomButton color="primary">
+          <CustomButton color="primary" onClick={this.handlePlayClick(choreographer.data)}>
             <PlayArrowIcon />
-            Play
+            Execute
           </CustomButton>
           <CustomButton color="primary" onClick={this.handleAddPlanClick}>
             <AddIcon />

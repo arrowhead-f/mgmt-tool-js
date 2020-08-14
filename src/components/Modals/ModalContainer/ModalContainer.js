@@ -15,6 +15,7 @@ import InterCloudDialog from '../ModalTypes/InterCloudDialog'
 import OrchStoreDialog from '../ModalTypes/OrchStoreDialog'
 import AddSystem from '../ModalTypes/AddSystem'
 import ChoreographerDialog from '../ModalTypes/ChoreographerDialog'
+import ChoreographerPlayDialog from '../ModalTypes/ChoreographerPlayDialog'
 import SettingsDialog from '../ModalTypes/SettingsDialog'
 import AddServiceDialog from '../ModalTypes/AddService'
 import AddInterfaceDialog from '../ModalTypes/AddInterface'
@@ -33,6 +34,7 @@ const MODAL_TYPES = {
   InterCloudDialog: InterCloudDialog,
   OrchStoreDialog: OrchStoreDialog,
   ChoreographerDialog: ChoreographerDialog,
+  ChoreographerPlayDialog: ChoreographerPlayDialog,
   settingsDialog: SettingsDialog
 }
 
