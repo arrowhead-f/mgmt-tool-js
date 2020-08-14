@@ -10,8 +10,21 @@ import {
   groupInterCloudDataByClouds,
   groupInterCloudDataByServices
 } from '../utils/authUtils'
+import store from 'store'
+
+import { coreSystemList } from '../utils/enums/coreSystemList'
 export const RECEIVE_AUTH_DATA = 'RECEIVE_AUTH_DATA'
 export const RECEIVE_INTERCLOUD_DATA = 'RECEIVE_INTERCLOUD_DATA'
+export const ERROR_AUTH = 'ERROR_AUTH'
+
+
+function errorAUTH(message){
+  return {
+    type: ERROR_AUTH,
+    data: message
+  }
+}
+
 
 function receiveAuthData(authRules, consumer, provider, service) {
   return {
@@ -33,42 +46,79 @@ function receiveInterCloudAuthData(cloud, service) {
 
 export function getIntraCloudAuthData(cb) {
   return (dispatch, getState) => {
-    networkService
-      .get('/authorization/mgmt/intracloud')
-      .then(response => {
-        dispatch(
-          receiveAuthData(
-            response.data.data,
-            groupAuthDataByConsumer(response.data.data),
-            groupAuthDataByProvider(response.data.data),
-            groupAuthDataByService(response.data.data)
+    const authorizationAddress = store.get(coreSystemList.authorization)
+    console.log('cccc', coreSystemList, authorizationAddress)
+    if (!authorizationAddress) {
+      console.log('No Authorization address!')
+      dispatch(errorAUTH('No Authorization Address Provided!'))
+    } else {
+      networkService
+        .get(authorizationAddress + '/authorization/mgmt/intracloud')
+        .then(response => {
+          dispatch(
+            receiveAuthData(
+              response.data.data,
+              groupAuthDataByConsumer(response.data.data),
+              groupAuthDataByProvider(response.data.data),
+              groupAuthDataByService(response.data.data)
+            )
           )
-        )
-        if(cb){
-          cb()
-        }
-      })
-      .catch(error => {
-        console.log(error)
-      })
+          if (cb) {
+            cb()
+          }
+        })
+        .catch(error => {
+          if(error.response){
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorAUTH('Check Authorization Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+        })
+    }
   }
 }
 
 export function getInterCloudAuthData() {
   return dispatch => {
-    networkService
-      .get('/authorization/mgmt/intercloud')
-      .then(response => {
-        dispatch(
-          receiveInterCloudAuthData(
-            groupInterCloudDataByClouds(response.data.data),
-            groupInterCloudDataByServices(response.data.data)
+    const authorizationAddress = store.get(coreSystemList.authorization)
+    if (!authorizationAddress) {
+      console.log('No Authorization address!')
+      dispatch(errorAUTH('No Authorization Address Provided!'))
+    } else {
+      networkService
+        .get(authorizationAddress + '/authorization/mgmt/intercloud')
+        .then(response => {
+          dispatch(
+            receiveInterCloudAuthData(
+              groupInterCloudDataByClouds(response.data.data),
+              groupInterCloudDataByServices(response.data.data)
+            )
           )
-        )
-      })
-      .catch(error => {
-        console.log(error)
-      })
+        })
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorAUTH('Check Authorization Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+        })
+    }
   }
 }
 
@@ -80,156 +130,228 @@ export function addAuthData(consumer, providerList, service, interfaces, cb) {
     interfaceIds: interfaces.map(i => i.id)
   }
   return dispatch => {
-    networkService
-      .post('/authorization/mgmt/intracloud', authData)
-      .then(response => {
-        dispatch(getIntraCloudAuthData())
-        dispatch(hideModal())
-        dispatch(
-          showNotification(
-            {
-              title: 'Saving was successful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'success'
+    const authorizationAddress = store.get(coreSystemList.authorization)
+    if (!authorizationAddress) {
+      console.log('No Authorization address!')
+      dispatch(errorAUTH('No Authorization Address Provided!'))
+    } else {
+      networkService
+        .post(authorizationAddress + '/authorization/mgmt/intracloud', authData)
+        .then(response => {
+          dispatch(getIntraCloudAuthData())
+          dispatch(hideModal())
+          dispatch(
+            showNotification(
+              {
+                title: 'Saving was successful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'success'
+            )
           )
-        )
-        if(cb){
-          cb()
-        }
-      })
-      .catch(error => {
-        dispatch(
-          showNotification(
-            {
-              title: 'Saving was unsuccessful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 10
-            },
-            'error'
+          if (cb) {
+            cb()
+          }
+        })
+        .catch(error => {
+          dispatch(
+            showNotification(
+              {
+                title: 'Saving was unsuccessful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 10
+              },
+              'error'
+            )
           )
-        )
-        console.log(error)
-      })
+          if (error.response) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorAUTH('Check Authorization Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+        })
+    }
   }
 }
 
 export function addInterCloudEntry(interCloudEntry) {
   return dispatch => {
-    networkService
-      .post('/authorization/mgmt/intercloud', interCloudEntry)
-      .then(response => {
-        dispatch(getInterCloudAuthData())
-        dispatch(
-          showNotification(
-            {
-              title: 'Saving was successful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'success'
+    const authorizationAddress = store.get(coreSystemList.authorization)
+    if (!authorizationAddress) {
+      console.log('No Authorization address!')
+      dispatch(errorAUTH('No Authorization Address Provided!'))
+    } else {
+      networkService
+        .post(authorizationAddress + '/authorization/mgmt/intercloud', interCloudEntry)
+        .then(response => {
+          dispatch(getInterCloudAuthData())
+          dispatch(
+            showNotification(
+              {
+                title: 'Saving was successful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'success'
+            )
           )
-        )
-      })
-      .catch(error => {
-        console.log(error)
-        dispatch(
-          showNotification(
-            {
-              title: 'Saving was unsuccessful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 10
-            },
-            'error'
+        })
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorAUTH('Check Authorization Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+          dispatch(
+            showNotification(
+              {
+                title: 'Saving was unsuccessful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 10
+              },
+              'error'
+            )
           )
-        )
-      })
+        })
+    }
   }
 }
 
 export function deleteAuthEntry(authEntryId, cb) {
   return dispatch => {
-    networkService
-      .delete(`/authorization/mgmt/intracloud/${authEntryId}`)
-      .then(response => {
-        dispatch(getIntraCloudAuthData())
-        if(cb){
-          cb()
-        }
-        dispatch(hideModal())
-        dispatch(
-          showNotification(
-            {
-              title: 'Deletion was successful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'success'
+    const authorizationAddress = store.get(coreSystemList.authorization)
+    if (!authorizationAddress) {
+      console.log('No Authorization address!')
+      dispatch(errorAUTH('No Authorization Address Provided!'))
+    } else {
+      networkService
+        .delete(authorizationAddress + `/authorization/mgmt/intracloud/${authEntryId}`)
+        .then(response => {
+          dispatch(getIntraCloudAuthData())
+          if (cb) {
+            cb()
+          }
+          dispatch(hideModal())
+          dispatch(
+            showNotification(
+              {
+                title: 'Deletion was successful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'success'
+            )
           )
-        )
-      })
-      .catch(error => {
-        console.log(error)
-        dispatch(
-          showNotification(
-            {
-              title: 'Deletion was unsuccessful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'error'
+        })
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorAUTH('Check Authorization Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+          dispatch(
+            showNotification(
+              {
+                title: 'Deletion was unsuccessful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'error'
+            )
           )
-        )
-      })
+        })
+    }
   }
 }
 
 export function deleteInterCloudEntry(entryId) {
   return dispatch => {
-    networkService
-      .delete(`/authorization/mgmt/intercloud/${entryId}`)
-      .then(response => {
-        dispatch(getInterCloudAuthData())
-        dispatch(
-          showNotification(
-            {
-              title: 'Deletion was successful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'success'
+    const authorizationAddress = store.get(coreSystemList.authorization)
+    if (!authorizationAddress) {
+      console.log('No Authorization address!')
+      dispatch(errorAUTH('No Authorization Address Provided!'))
+    } else {
+      networkService
+        .delete(authorizationAddress + `/authorization/mgmt/intercloud/${entryId}`)
+        .then(response => {
+          dispatch(getInterCloudAuthData())
+          dispatch(
+            showNotification(
+              {
+                title: 'Deletion was successful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'success'
+            )
           )
-        )
-      })
-      .catch(error => {
-        console.log(error)
-        dispatch(
-          showNotification(
-            {
-              title: 'Deletion was unsuccessful',
-              message: '',
-              position: 'tc',
-              dismissible: true,
-              autoDismiss: 5
-            },
-            'error'
+        })
+        .catch(error => {
+          if (error.response) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            console.log('error!', error, error.message)
+            console.log('err req!', JSON.stringify(error.request, null, 4))
+
+            dispatch(errorAUTH('Check Authorization Address or Load a Certificate!'))
+          } else {
+            console.log('Error', error.message)
+          }
+          console.log('config', error.config)
+          dispatch(
+            showNotification(
+              {
+                title: 'Deletion was unsuccessful',
+                message: '',
+                position: 'tc',
+                dismissible: true,
+                autoDismiss: 5
+              },
+              'error'
+            )
           )
-        )
-      })
+        })
+    }
   }
 }

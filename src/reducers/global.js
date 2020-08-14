@@ -1,6 +1,8 @@
 import { SHOW_LOADING_LAYER, HIDE_LOADING_LAYER } from '../actions/global'
 import { ERROR_SR } from '../actions/serviceRegistry'
 import { ERROR_CH } from '../actions/choreographer'
+import { ERROR_ORCH } from '../actions/orchestrator'
+import { ERROR_AUTH } from '../actions/auth'
 
 const initialState = {
   isLoadingLayerVisible: false,
@@ -22,6 +24,8 @@ export default function auth(state = initialState, action = {}) {
       }
     case ERROR_SR:
     case ERROR_CH:
+    case ERROR_ORCH:
+    case ERROR_AUTH:
       return {
        ...state,
         notifications: [...state.notifications, action.data]

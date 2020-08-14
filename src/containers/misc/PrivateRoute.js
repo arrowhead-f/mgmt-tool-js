@@ -10,7 +10,7 @@ class PrivateRoute extends React.Component {
       <Route
         {...rest}
         render={props =>
-          this.props.token ? (
+          true ? (
             <Component {...props} />
           ) : (
             <Redirect
