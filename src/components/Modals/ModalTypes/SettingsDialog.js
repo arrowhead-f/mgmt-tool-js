@@ -9,6 +9,7 @@ import * as PropTypes from 'prop-types'
 import Button from '../../../components/CustomButtons/Button'
 import Card from '@material-ui/core/Card'
 import store from 'store'
+import { coreSystemList } from '../../../utils/enums/coreSystemList'
 import { withStyles } from '@material-ui/core/styles/'
 
 const styles = theme => ({
@@ -38,35 +39,43 @@ class SettingsDialog extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      serviceRegistry: store.get('serviceRegistry'),
-      authorization: store.get('authorization'),
-      orchestrator: store.get('orchestrator'),
-      choreographer: store.get('choreographer')
+      serviceRegistry: store.get(coreSystemList.serviceRegistry),
+      authorization: store.get(coreSystemList.authorization),
+      orchestrator: store.get(coreSystemList.orchestrator),
+      choreographer: store.get(coreSystemList.choreographer),
+      gatekeeper: store.get(coreSystemList.gatekeeper),
+      gateway: store.get(coreSystemList.gateway),
+      eventHandler: store.get(coreSystemList.eventHandler),
+      systemRegistry: store.get(coreSystemList.systemRegistry),
+      deviceRegistry: store.get(coreSystemList.deviceRegistry),
+      qosMonitor: store.get(coreSystemList.qosMonitor)
     }
   }
 
-  handleSRAddressChange = event => {
-    this.setState({ serviceRegistry: event.target.value })
-  }
-
-  handleAuthAddressChange = event => {
-    this.setState({ authorization: event.target.value })
-  }
-
-  handleOrchAddressChange = event => {
-    this.setState({ orchestrator: event.target.value })
-  }
-
-  handleCHAddressChange = event => {
-    this.setState({ choreographer: event.target.value })
+  handleAddressChange = type => event => {
+    console.log(this.state)
+    this.setState({ [type]: event.target.value })
   }
 
   handleSave = () => {
-    store.set('serviceRegistry', this.state.serviceRegistry)
-    store.set('authorization', this.state.authorization)
-    store.set('orchestrator', this.state.orchestrator)
-    store.set('choreographer', this.state.choreographer)
+    for(const [key, value] of Object.entries(this.state)) {
+      store.set(key, value)
+    }
     this.props.closeModal()
+  }
+
+  isButtonDisabled = () => {
+    /*
+    strict check, every field must be provided
+
+    for (const [key, value] of Object.entries(this.state)) {
+      if(!value){
+        return false
+      }
+    }
+    return true
+    */
+    return false
   }
 
   render() {
@@ -80,7 +89,7 @@ class SettingsDialog extends Component {
         <TextField
           id="serviceRegistry"
           required
-          onChange={this.handleSRAddressChange}
+          onChange={this.handleAddressChange(coreSystemList.serviceRegistry)}
           label="Service Registry Address"
           placeholder="https://arrowhead.tmit.bme.hu:8443"
           className={classes.input}
@@ -89,7 +98,7 @@ class SettingsDialog extends Component {
         <TextField
           id="authorization"
           required
-          onChange={this.handleAuthAddressChange}
+          onChange={this.handleAddressChange(coreSystemList.authorization)}
           label="Authorization Address"
           placeholder="https://arrowhead.tmit.bme.hu:8445"
           className={classes.input}
@@ -98,7 +107,7 @@ class SettingsDialog extends Component {
         <TextField
           id="orchestrator"
           required
-          onChange={this.handleOrchAddressChange}
+          onChange={this.handleAddressChange(coreSystemList.orchestrator)}
           label="Orchestrator Address"
           placeholder="https://arrowhead.tmit.bme.hu:8441"
           className={classes.input}
@@ -107,14 +116,71 @@ class SettingsDialog extends Component {
         <TextField
           id="choreographer"
           required
-          onChange={this.handleCHAddressChange}
+          onChange={this.handleAddressChange(coreSystemList.choreographer)}
           label="Choreographer Address"
           placeholder="https://arrowhead.tmit.bme.hu:8457"
           className={classes.input}
           defaultValue={this.state.choreographer}
         />
+
+
+        <TextField
+          id={coreSystemList.gatekeeper}
+          required
+          onChange={this.handleAddressChange(coreSystemList.gatekeeper)}
+          label="Gatekeeper Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8449"
+          className={classes.input}
+          defaultValue={this.state.gatekeeper}
+        />
+        <TextField
+          id={coreSystemList.gateway}
+          required
+          onChange={this.handleAddressChange(coreSystemList.gateway)}
+          label="Gateway Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8453"
+          className={classes.input}
+          defaultValue={this.state.gateway}
+        />
+        <TextField
+          id={coreSystemList.eventHandler}
+          required
+          onChange={this.handleAddressChange(coreSystemList.eventHandler)}
+          label="Event Handler Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8455"
+          className={classes.input}
+          defaultValue={this.state.eventHandler}
+        />
+        <TextField
+          id={coreSystemList.systemRegistry}
+          required
+          onChange={this.handleAddressChange(coreSystemList.systemRegistry)}
+          label="System Registry Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8437"
+          className={classes.input}
+          defaultValue={this.state.systemRegistry}
+        />
+        <TextField
+          id={coreSystemList.deviceRegistry}
+          required
+          onChange={this.handleAddressChange(coreSystemList.deviceRegistry)}
+          label="Device Registry Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8439"
+          className={classes.input}
+          defaultValue={this.state.deviceRegistry}
+        />
+        <TextField
+          id={coreSystemList.qosMonitor}
+          required
+          onChange={this.handleAddressChange(coreSystemList.qosMonitor)}
+          label="QoS Monitor Address"
+          placeholder="https://arrowhead.tmit.bme.hu:8451"
+          className={classes.input}
+          defaultValue={this.state.qosMonitor}
+        />
+
         <Button
-          disabled={ this.state.serviceRegistry === '' || this.state.authorization === '' || this.state.orchestrator === '' || this.state.choreographer === '' }
+          disabled={this.isButtonDisabled()}
           color='primary'
           onClick={this.handleSave}
           className={classes.button}

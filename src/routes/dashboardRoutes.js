@@ -131,14 +131,14 @@ const dashboardRoutes = [
     component: InterfacePage
   },
   {
-    path: '/sysregistry',
+    path: '/systemregistry',
     sidebarName: 'System Registry',
     navbarName: 'System Registry',
     icon: List,
     component: InterfacePage
   },
   {
-    path: '/devregistry',
+    path: '/deviceregistry',
     sidebarName: 'Device Registry',
     navbarName: 'Device Registry',
     icon: SdCard,
