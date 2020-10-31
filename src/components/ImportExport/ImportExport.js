@@ -274,7 +274,7 @@ class ImportExport extends Component {
               maxFileSize={10000000}
               minFileSize={0}
               clickable>
-              <div style={{paddingLeft: '16px', paddingRight: '116px'}}>
+              <div>
                 Import
               </div>
             </Files>
